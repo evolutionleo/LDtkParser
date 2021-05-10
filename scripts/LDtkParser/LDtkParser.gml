@@ -315,9 +315,23 @@ function LDtkLoad(level_name) {
 				//var empty_tile = 0
 				//tilemap_clear(tilemap, empty_tile)
 				
+				// this is layer's cell size
+				//var cwid = this_layer.__cWid
+				//var chei = this_layer.__cHei
 				
-				var cwid = this_layer.__cWid
-				var chei = this_layer.__cHei
+				// this is tileset's cell size
+				var cwid = -1
+				var chei = -1
+				
+				for(var ts = 0; ts < array_length(data.defs.tilesets); ++ts) {
+					var tileset_def = data.defs.tilesets[ts]
+					
+					if tileset_def.uid == this_layer.__tilesetDefUid {
+						cwid = tileset_def.__cWid
+						chei = tileset_def.__cHei
+					}
+				}
+				
 				
 				var tile_size = this_layer.__gridSize
 				
