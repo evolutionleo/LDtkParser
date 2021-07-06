@@ -1,2 +1,2 @@
 # Re-classify .yy files (for GMS 2 projects)      
-*.yy linguist-language=GML
+*.yy linguist-language=Game Maker Language
