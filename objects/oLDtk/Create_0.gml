@@ -12,7 +12,7 @@ if (LDTK_LIVE) {
 		// so we need to load directly from the project folder
 		
 		// change this to your project directory
-		file: "C:\\Users\\evolu\\Desktop\\Projects\\Actual projects\\GMS 2.3 Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk",
+		file: "D:\\Projects\\GameMaker Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk",
 		level_name: "LDtkTest1"
 	})
 }

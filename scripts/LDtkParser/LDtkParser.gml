@@ -30,6 +30,7 @@ global.__ldtk_config = {
 	}
 }
 
+
 global.__ldtk_live_hash = ""
 
 global.__ldtk_live_timer = -1
@@ -108,7 +109,7 @@ function LDtkLoad(level_name) {
 	
 	var file = config.file
 	if (!file_exists(file)) {
-		throw "Warning! LDtk project file is not specified or file does not exist!"
+		throw "Warning! LDtk project file is not specified or file does not exist! (" + string(file) + ")"
 		return -1
 	}
 	
@@ -164,11 +165,11 @@ function LDtkLoad(level_name) {
 	// for each layer in the level
 	for(var i = 0; i < array_length(level.layerInstances); i++) {
 		var this_layer = level.layerInstances[i]
-		var layer_name = this_layer.__identifier
+		var _layer_name = this_layer.__identifier
 		
-		var gm_layer_name = config.mappings.layers[$ (layer_name)]
+		var gm_layer_name = config.mappings.layers[$ (_layer_name)]
 		if gm_layer_name == undefined
-			gm_layer_name = layer_name
+			gm_layer_name = _layer_name
 		
 		var gm_layer_id = layer_get_id(gm_layer_name)
 		
@@ -204,10 +205,14 @@ function LDtkLoad(level_name) {
 					inst.image_yscale = entity.height / sh
 					
 					
-					var prepare_point = function(point) {
-							return { x: point.cx * tile_size, y: point.cy * tile_size }
+					var prepare_point = function(point, tile_size) {
+						if !is_struct(point) and point == pointer_null { // if the field is null
+							//show_message(point)
+							return undefined
+						}
+						return { x: point.cx * tile_size, y: point.cy * tile_size }
 					}
-						
+					
 					var prepare_color = function(color) {
 						// cut the #
 						color = string_copy(color, 2, string_length(color)-1)
@@ -219,13 +224,18 @@ function LDtkLoad(level_name) {
 						return make_color_rgb(red, green, blue)
 					}
 					
-					var prepare_enum = function(enum_name, value) {
-						var result = global.__ldtk_config.mappings.enums[$ (enum_name)][$ (value)]
+					var prepare_enum = function(_enum_name, value) {
+						if value == pointer_null
+							return value
+						
+						var result = global.__ldtk_config.mappings.enums[$ (_enum_name)][$ (value)]
+						
 						if result == undefined
 							return value // just return the string
 						else
 							return result
 					}
+					
 					
 					// Load the fields
 					
@@ -251,7 +261,7 @@ function LDtkLoad(level_name) {
 						// some types require additional work
 						switch(field_type) {
 							case "Point":
-								field_value = prepare_point(field_value)
+								field_value = prepare_point(field_value, tile_size)
 								break
 							case "Array<Point>":
 								for(var j = 0; j < array_length(field_value); j++) {
@@ -270,15 +280,15 @@ function LDtkLoad(level_name) {
 								if (string_pos("LocalEnum", field_type)) {
 									var enum_name_idx = string_pos(".", field_type)
 									var enum_name_len = string_length(field_type)
-									var enum_name = string_copy(field_type, enum_name_idx+1, 999)
+									var _enum_name = string_copy(field_type, enum_name_idx+1, 999)
 									
 									if (string_pos("Array<", field_type)) {
 										for(var j = 0; j < array_length(field_value); j++) {
-											field_value[@ j] = prepare_enum(enum_name, field_value[j])
+											field_value[@ j] = prepare_enum(_enum_name, field_value[j])
 										}
 									}
 									else {
-										field_value = prepare_enum(enum_name, field_value)
+										field_value = prepare_enum(_enum_name, field_value)
 									}
 								}
 								
@@ -301,7 +311,7 @@ function LDtkLoad(level_name) {
 					__LDtkTrace("Loaded Entity! GM instance id=%", inst)
 				}
 				
-				__LDtkTrace("Loaded an Entities Layer! name=%, gm_name=%", layer_name, gm_layer_name)
+				__LDtkTrace("Loaded an Entities Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
 				break
 			case "IntGrid": // just ignore...
 				__LDtkTrace("IntGrid layers are ignored")
@@ -356,7 +366,7 @@ function LDtkLoad(level_name) {
 					tilemap_set(tilemap, tile_data, cell_x, cell_y)
 				}
 				
-				__LDtkTrace("Loaded a Tile Layer! name=%, gm_name=%", layer_name, gm_layer_name)
+				__LDtkTrace("Loaded a Tile Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
 				break
 			default:
 				__LDtkTrace("warning! undefined layer type! (%)", this_layer.__type)
@@ -417,6 +427,9 @@ function LDtkReloadFields() {
 		__LDtkTrace("Warning: LDtkReloadFields() is called, but the `escape fields` config is turned off.\Did you mean to enable the config or not call the function? (Variables are loaded automatically by default)")
 		return -1
 	}
+	
+	if (!variable_instance_exists(self, "__ldtk_fields"))
+		return 0
 	
 	var field_names = variable_struct_get_names(self.__ldtk_fields)
 	for(var i = 0; i < array_length(field_names); ++i) {
