@@ -7,24 +7,27 @@ global.__ldtk_config = {
 						 // (so that they don't get overwritten by Variable Definitions)
 						 // you will have to call LDtkReloadFields() somewhere in the Create Event
 	
-	// also note that LDtk forces the first letter to be Uppercase
+	// also note that LDtk defaults to the first letter being uppercase, this can be changed in the LDtk settings
 	room_prefix: "r",
 	object_prefix: "o",
 	
 	mappings: { // if a mapping doesn't exist - ldtk name (with a prefix) is used
-		levels: { // ldtk_level_name -> gms_room_name
+		levels: { // ldtk_level_name -> gm_room_name
 			
 		},
-		layers: { // ldtk_layer_name -> gms_room_layer_name
+		layers: { // ldtk_layer_name -> gm_room_layer_name
 			Entities: "Instances"
 		},
 		enums: { // ldtk_enum_name -> { ldtk_enum_value -> gml_value }
 			
 		},
-		entities: { // ldtk_entity_name -> gms_object_name
+		entities: { // ldtk_entity_name -> gm_object_name
 			
 		},
-		fields: { // ldtk_entity_name -> { ldtk_entity_field_name -> gms_instance_variable_name }
+		fields: { // ldtk_entity_name -> { ldtk_entity_field_name -> gm_instance_variable_name }
+			
+		},
+		tilesets: { // ldtk_tileset_name -> gm_tileset_name
 			
 		}
 	}
@@ -83,6 +86,41 @@ function __LDtkDeepInheritVariables(src, dest) {
 			variable_struct_set(dest, var_name, var_value)
 		}
 	}
+}
+
+function __LDtkPreparePoint(point, tile_size) {
+	if !is_struct(point) and point == pointer_null { // if the field is null
+		//show_message(point)
+		return undefined
+	}
+	
+	if tile_size == undefined
+		return { x: point.cx, y: point.cy }
+	else
+		return { x: point.cx * tile_size, y: point.cy * tile_size }				
+}
+
+function __LDtkPrepareColor(color) {
+	// cut the #
+	color = string_copy(color, 2, string_length(color)-1)
+	// extract the colors
+	var red = hex_to_dec(string_copy(color, 1, 2))
+	var green = hex_to_dec(string_copy(color, 3, 2))
+	var blue = hex_to_dec(string_copy(color, 5, 2))
+	
+	return make_color_rgb(red, green, blue)
+}
+
+function __LDtkPrepareEnum(_enum_name, value) {
+	if value == pointer_null
+		return value
+	
+	var result = global.__ldtk_config.mappings.enums[$ (_enum_name)]
+	
+	if result == undefined or result[$ (value)] == undefined
+		return value // just return the string
+	else
+		return result[$ (value)]
 }
 
 ///@function	LDtkMappings(mappings)
@@ -173,6 +211,11 @@ function LDtkLoad(level_name) {
 		
 		var gm_layer_id = layer_get_id(gm_layer_name)
 		
+		if (gm_layer_id == -1) {
+			__LDtkTrace(gm_layer_name, "not found, ignoring layer!")
+			continue
+		}
+		
 		switch(this_layer.__type) {
 			case "Entities": // instances
 				var tile_size = this_layer.__gridSize // for scaling
@@ -191,51 +234,23 @@ function LDtkLoad(level_name) {
 					
 					var object_id = asset_get_index(obj_name)
 					
-					var _x = entity.px[0]
-					var _y = entity.px[1]
+					if (object_id == -1) {
+						__LDtkTrace(obj_name, "not found in GM, ignoring!")
+						continue
+					}
+					
+					var _x = entity.px[0] + this_layer.__pxTotalOffsetX
+					var _y = entity.px[1] + this_layer.__pxTotalOffsetY
 					
 					var inst = instance_create_layer(_x, _y, gm_layer_id, oEmpty) // we'll need instance_change() to work around the create event
 					
-					
+					// TODO: Change this up for objects without sprites
 					var spr = object_get_sprite(object_id)
 					var sw = sprite_get_width(spr)
 					var sh = sprite_get_height(spr)
 					
 					inst.image_xscale = entity.width / sw
 					inst.image_yscale = entity.height / sh
-					
-					
-					var prepare_point = function(point, tile_size) {
-						if !is_struct(point) and point == pointer_null { // if the field is null
-							//show_message(point)
-							return undefined
-						}
-						return { x: point.cx * tile_size, y: point.cy * tile_size }
-					}
-					
-					var prepare_color = function(color) {
-						// cut the #
-						color = string_copy(color, 2, string_length(color)-1)
-						// extract the colors
-						var red = hex_to_dec(string_copy(color, 1, 2))
-						var green = hex_to_dec(string_copy(color, 3, 2))
-						var blue = hex_to_dec(string_copy(color, 5, 2))
-							
-						return make_color_rgb(red, green, blue)
-					}
-					
-					var prepare_enum = function(_enum_name, value) {
-						if value == pointer_null
-							return value
-						
-						var result = global.__ldtk_config.mappings.enums[$ (_enum_name)][$ (value)]
-						
-						if result == undefined
-							return value // just return the string
-						else
-							return result
-					}
-					
 					
 					// Load the fields
 					
@@ -261,19 +276,19 @@ function LDtkLoad(level_name) {
 						// some types require additional work
 						switch(field_type) {
 							case "Point":
-								field_value = prepare_point(field_value, tile_size)
+								field_value = __LDtkPreparePoint(field_value, tile_size)
 								break
 							case "Array<Point>":
 								for(var j = 0; j < array_length(field_value); j++) {
-									field_value[@ j] = prepare_point(field_value[j])
+									field_value[@ j] = __LDtkPreparePoint(field_value[j])
 								}
 								break
 							case "Color": // colors should be actual colors
-								field_value = prepare_color(field_value)
+								field_value = __LDtkPrepareColor(field_value)
 								break
 							case "Array<Color>":
 								for(var j = 0; j < array_length(field_value); j++) {
-									field_value[@ j] = prepare_color(field_value[j])
+									field_value[@ j] = __LDtkPrepareColor(field_value[j])
 								}
 								break
 							default:
@@ -284,11 +299,11 @@ function LDtkLoad(level_name) {
 									
 									if (string_pos("Array<", field_type)) {
 										for(var j = 0; j < array_length(field_value); j++) {
-											field_value[@ j] = prepare_enum(_enum_name, field_value[j])
+											field_value[@ j] = __LDtkPrepareEnum(_enum_name, field_value[j])
 										}
 									}
 									else {
-										field_value = prepare_enum(_enum_name, field_value)
+										field_value = __LDtkPrepareEnum(_enum_name, field_value)
 									}
 								}
 								
@@ -332,18 +347,42 @@ function LDtkLoad(level_name) {
 				// this is tileset's cell size
 				var cwid = -1
 				var chei = -1
+				var tileset_def = undefined
 				
 				for(var ts = 0; ts < array_length(data.defs.tilesets); ++ts) {
-					var tileset_def = data.defs.tilesets[ts]
+					tileset_def = data.defs.tilesets[ts]
 					
 					if tileset_def.uid == this_layer.__tilesetDefUid {
 						cwid = tileset_def.__cWid
 						chei = tileset_def.__cHei
+						
+						break
 					}
 				}
 				
+				if tileset_def == undefined
+					break
 				
 				var tile_size = this_layer.__gridSize
+				
+				// create tilemap if it doesn't exist on the layer
+				if (tilemap == -1) {
+					var tileset_name = tileset_def.identifier
+					var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
+					
+					if gm_tileset_name == undefined
+						gm_tileset_name = tileset_name
+					
+					var gm_tileset_id = asset_get_index(gm_tileset_name)
+					
+					if gm_tileset_id == -1
+						break
+					
+					tilemap = layer_tilemap_create(gm_layer_id, this_layer.__pxTotalOffsetX, this_layer.__pxTotalOffsetY, gm_tileset_id, cwid * tile_size, chei * tile_size)
+				} else { // respect layer offsets
+					tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
+					tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+				}
 				
 				for(var t = 0; t < array_length(this_layer.gridTiles); ++t) {
 					var this_tile = this_layer.gridTiles[t]
@@ -417,7 +456,7 @@ function __LDtkClear() {
 }
 
 ///@function	LDtkReloadFields()
-///@description	Reloads fileds from an isolated struct.
+///@description	Reloads fields from an isolated struct.
 ///				This works around the Variable Definitions tab
 ///				You don't need this in most cases
 ///				You would want to call this in the Create Event
@@ -459,3 +498,4 @@ function hex_to_dec(str) {
 	
 	return ans
 }
+
