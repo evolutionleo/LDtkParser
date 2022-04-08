@@ -35,5 +35,8 @@ LDtkMappings({
 			Second: "This is second",
 			Third: 3
 		}
+	},
+	tilesets: {
+		PlaceholderTiles: "tTiles"
 	}
 })

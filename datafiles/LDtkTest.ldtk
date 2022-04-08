@@ -5,30 +5,34 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "0.9.3",
+		"appVersion": "1.1.1",
 		"url": "https://ldtk.io"
 	},
-	"jsonVersion": "0.9.3",
+	"jsonVersion": "1.1.1",
+	"appBuildId": 458076,
 	"nextUid": 43,
+	"identifierStyle": "Capitalize",
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
 	"worldGridHeight": 256,
+	"defaultLevelWidth": 256,
+	"defaultLevelHeight": 256,
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
 	"defaultGridSize": 16,
-	"defaultLevelWidth": 256,
-	"defaultLevelHeight": 256,
 	"bgColor": "#40465B",
 	"defaultLevelBgColor": "#696A79",
 	"minifyJson": false,
 	"externalLevels": false,
 	"exportTiled": false,
+	"simplifiedExport": false,
 	"imageExportMode": "None",
 	"pngFilePattern": null,
 	"backupOnSave": false,
 	"backupLimit": 10,
 	"levelNamePattern": "Test%idx",
-	"flags": [],
+	"tutorialDesc": null,
+	"flags": ["PrependIndexToLevelFileNames"],
 	"defs": { "layers": [
 		{
 			"__type": "Entities",
@@ -36,12 +40,20 @@
 			"type": "Entities",
 			"uid": 3,
 			"gridSize": 16,
+			"guideGridWid": 0,
+			"guideGridHei": 0,
 			"displayOpacity": 1,
+			"inactiveOpacity": 0.6,
+			"hideInList": false,
+			"hideFieldsWhenInactive": true,
 			"pxOffsetX": 0,
 			"pxOffsetY": 0,
+			"parallaxFactorX": 0,
+			"parallaxFactorY": 0,
+			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
+			"intGridValues": [],
 			"autoTilesetDefUid": null,
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
@@ -55,13 +67,21 @@
 			"type": "Tiles",
 			"uid": 2,
 			"gridSize": 32,
+			"guideGridWid": 0,
+			"guideGridHei": 0,
 			"displayOpacity": 1,
+			"inactiveOpacity": 1,
+			"hideInList": false,
+			"hideFieldsWhenInactive": true,
 			"pxOffsetX": 0,
 			"pxOffsetY": 0,
+			"parallaxFactorX": 0,
+			"parallaxFactorY": 0,
+			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [{ "value": 1, "identifier": null, "color": "#000000" }],
-			"autoTilesetDefUid": null,
+			"intGridValues": [],
+			"autoTilesetDefUid": 1,
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": 1,
@@ -74,9 +94,17 @@
 			"type": "IntGrid",
 			"uid": 27,
 			"gridSize": 32,
+			"guideGridWid": 0,
+			"guideGridHei": 0,
 			"displayOpacity": 1,
+			"inactiveOpacity": 1,
+			"hideInList": false,
+			"hideFieldsWhenInactive": true,
 			"pxOffsetX": 0,
 			"pxOffsetY": 0,
+			"parallaxFactorX": 0,
+			"parallaxFactorY": 0,
+			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [
@@ -106,6 +134,7 @@
 			"resizableX": true,
 			"resizableY": true,
 			"keepAspectRatio": false,
+			"tileOpacity": 1,
 			"fillOpacity": 1,
 			"lineOpacity": 1,
 			"hollow": false,
@@ -115,6 +144,8 @@
 			"tilesetId": null,
 			"tileId": null,
 			"tileRenderMode": "FitInside",
+			"tileRect": null,
+			"nineSliceBorders": [],
 			"maxCount": 0,
 			"limitScope": "PerLevel",
 			"limitBehavior": "MoveLastOne",
@@ -134,18 +165,27 @@
 					"editorDisplayPos": "Above",
 					"editorAlwaysShow": true,
 					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
 					"min": 0,
 					"max": 25,
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": { "id": "V_Int", "params": [5] },
-					"textLanguageMode": null
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefTags": [],
+					"tilesetUid": null
 				},
 				{
 					"identifier": "testEnum",
 					"__type": "LocalEnum.TestEnum",
 					"uid": 36,
-					"type": { "id": "F_Enum", "params": [35] },
+					"type": "F_Enum(35)",
 					"isArray": false,
 					"canBeNull": false,
 					"arrayMinLength": null,
@@ -154,12 +194,21 @@
 					"editorDisplayPos": "Above",
 					"editorAlwaysShow": false,
 					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
 					"min": null,
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
 					"defaultOverride": null,
-					"textLanguageMode": null
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefTags": [],
+					"tilesetUid": null
 				}
 			]
 		}
@@ -170,11 +219,13 @@
 			"identifier": "PlaceholderTiles",
 			"uid": 1,
 			"relPath": "../sprites/sTiles/21121d05-069b-4cac-a7f4-29276ef81c64.png",
+			"embedAtlas": null,
 			"pxWid": 128,
 			"pxHei": 128,
 			"tileGridSize": 32,
 			"spacing": 0,
 			"padding": 0,
+			"tags": [],
 			"tagsSourceEnumUid": null,
 			"enumTags": [],
 			"customData": [],
@@ -186,19 +237,21 @@
 			{ "id": "Stop", "tileId": null, "color": 16711680, "__tileSrcRect": null },
 			{ "id": "Reverse", "tileId": null, "color": 16766464, "__tileSrcRect": null },
 			{ "id": "Junction", "tileId": null, "color": 817663, "__tileSrcRect": null }
-		], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null },
+		], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null, "tags": [] },
 		{ "identifier": "TestEnum", "uid": 35, "values": [
 			{ "id": "First", "tileId": null, "color": 0, "__tileSrcRect": null },
 			{ "id": "Second", "tileId": null, "color": 0, "__tileSrcRect": null },
 			{ "id": "Third", "tileId": null, "color": 0, "__tileSrcRect": null }
-		], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null }
+		], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null, "tags": [] }
 	], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
 			"identifier": "LDtkTest1",
+			"iid": "3f259711-b4d0-11ec-b21c-bd9e94dca9dd",
 			"uid": 30,
 			"worldX": 176,
 			"worldY": -256,
+			"worldDepth": 0,
 			"pxWid": 448,
 			"pxHei": 256,
 			"__bgColor": "#696A79",
@@ -208,6 +261,7 @@
 			"bgPos": null,
 			"bgPivotX": 0.5,
 			"bgPivotY": 0.5,
+			"__smartColor": "#ADADB5",
 			"__bgPos": null,
 			"externalRelPath": null,
 			"fieldInstances": [],
@@ -223,13 +277,13 @@
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": null,
 					"__tilesetRelPath": null,
+					"iid": "3f25e530-b4d0-11ec-b21c-2bdc2378e239",
 					"levelId": 30,
 					"layerDefUid": 3,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
 					"visible": true,
 					"optionalRules": [],
-					"intGrid": [],
 					"intGridCsv": [],
 					"autoLayerTiles": [],
 					"seed": 8408249,
@@ -240,116 +294,80 @@
 							"__identifier": "LDtk_test",
 							"__grid": [19,10],
 							"__pivot": [0,0],
+							"__tags": [],
 							"__tile": null,
+							"__smartColor": "#94D9B3",
+							"iid": "3f25e531-b4d0-11ec-b21c-dd512aa1f060",
 							"width": 32,
 							"height": 32,
 							"defUid": 32,
 							"px": [304,160],
 							"fieldInstances": [
-								{
-									"__identifier": "a",
-									"__value": 5,
-									"__type": "Int",
-									"defUid": 33,
-									"realEditorValues": [{ "id": "V_Int", "params": [5] }]
-								},
-								{
-									"__identifier": "testEnum",
-									"__value": "Third",
-									"__type": "LocalEnum.TestEnum",
-									"defUid": 36,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Third"]
-									}]
-								}
+								{ "__identifier": "a", "__value": 5, "__type": "Int", "__tile": null, "defUid": 33, "realEditorValues": [{ "id": "V_Int", "params": [5] }] },
+								{ "__identifier": "testEnum", "__value": "Third", "__type": "LocalEnum.TestEnum", "__tile": null, "defUid": 36, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Third"]
+								}] }
 							]
 						},
 						{
 							"__identifier": "LDtk_test",
 							"__grid": [5,10],
 							"__pivot": [0,0],
+							"__tags": [],
 							"__tile": null,
+							"__smartColor": "#94D9B3",
+							"iid": "3f260c40-b4d0-11ec-b21c-418891f69ff6",
 							"width": 32,
 							"height": 32,
 							"defUid": 32,
 							"px": [80,160],
 							"fieldInstances": [
-								{
-									"__identifier": "a",
-									"__value": 15,
-									"__type": "Int",
-									"defUid": 33,
-									"realEditorValues": [{ "id": "V_Int", "params": [15] }]
-								},
-								{
-									"__identifier": "testEnum",
-									"__value": "First",
-									"__type": "LocalEnum.TestEnum",
-									"defUid": 36,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["First"]
-									}]
-								}
+								{ "__identifier": "a", "__value": 15, "__type": "Int", "__tile": null, "defUid": 33, "realEditorValues": [{ "id": "V_Int", "params": [15] }] },
+								{ "__identifier": "testEnum", "__value": "First", "__type": "LocalEnum.TestEnum", "__tile": null, "defUid": 36, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["First"]
+								}] }
 							]
 						},
 						{
 							"__identifier": "LDtk_test",
 							"__grid": [9,4],
 							"__pivot": [0,0],
+							"__tags": [],
 							"__tile": null,
+							"__smartColor": "#94D9B3",
+							"iid": "3f260c41-b4d0-11ec-b21c-d5e785e222a5",
 							"width": 32,
 							"height": 32,
 							"defUid": 32,
 							"px": [144,64],
 							"fieldInstances": [
-								{
-									"__identifier": "a",
-									"__value": 12,
-									"__type": "Int",
-									"defUid": 33,
-									"realEditorValues": [{ "id": "V_Int", "params": [12] }]
-								},
-								{
-									"__identifier": "testEnum",
-									"__value": "Second",
-									"__type": "LocalEnum.TestEnum",
-									"defUid": 36,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["Second"]
-									}]
-								}
+								{ "__identifier": "a", "__value": 12, "__type": "Int", "__tile": null, "defUid": 33, "realEditorValues": [{ "id": "V_Int", "params": [12] }] },
+								{ "__identifier": "testEnum", "__value": "Second", "__type": "LocalEnum.TestEnum", "__tile": null, "defUid": 36, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Second"]
+								}] }
 							]
 						},
 						{
 							"__identifier": "LDtk_test",
 							"__grid": [12,11],
 							"__pivot": [0,0],
+							"__tags": [],
 							"__tile": null,
+							"__smartColor": "#94D9B3",
+							"iid": "3f263350-b4d0-11ec-b21c-91cfd1fba119",
 							"width": 32,
 							"height": 32,
 							"defUid": 32,
 							"px": [192,176],
 							"fieldInstances": [
-								{
-									"__identifier": "a",
-									"__value": 9,
-									"__type": "Int",
-									"defUid": 33,
-									"realEditorValues": [{ "id": "V_Int", "params": [9] }]
-								},
-								{
-									"__identifier": "testEnum",
-									"__value": "First",
-									"__type": "LocalEnum.TestEnum",
-									"defUid": 36,
-									"realEditorValues": [{
-										"id": "V_String",
-										"params": ["First"]
-									}]
-								}
+								{ "__identifier": "a", "__value": 9, "__type": "Int", "__tile": null, "defUid": 33, "realEditorValues": [{ "id": "V_Int", "params": [9] }] },
+								{ "__identifier": "testEnum", "__value": "First", "__type": "LocalEnum.TestEnum", "__tile": null, "defUid": 36, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["First"]
+								}] }
 							]
 						}
 					]
@@ -365,13 +383,13 @@
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 1,
 					"__tilesetRelPath": "../sprites/sTiles/21121d05-069b-4cac-a7f4-29276ef81c64.png",
+					"iid": "3f263351-b4d0-11ec-b21c-7727534be76f",
 					"levelId": 30,
 					"layerDefUid": 2,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
 					"visible": true,
 					"optionalRules": [],
-					"intGrid": [],
 					"intGridCsv": [],
 					"autoLayerTiles": [],
 					"seed": 2225882,
@@ -445,13 +463,13 @@
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": null,
 					"__tilesetRelPath": null,
+					"iid": "3f265a60-b4d0-11ec-b21c-91a1b9e4ddbb",
 					"levelId": 30,
 					"layerDefUid": 27,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
 					"visible": true,
 					"optionalRules": [],
-					"intGrid": [],
 					"intGridCsv": [
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -467,5 +485,6 @@
 			],
 			"__neighbours": []
 		}
-	]
+	],
+	"worlds": []
 }
