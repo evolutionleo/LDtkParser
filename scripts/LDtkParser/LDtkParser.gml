@@ -250,10 +250,18 @@ function LDtkLoad(level_name) {
 					// add to entity_reference
 					entity_references[$ entity.iid] = inst;
 					
-					// TODO: Change this up for objects without sprites
 					var spr = object_get_sprite(object_id)
-					var sw = sprite_get_width(spr)
-					var sh = sprite_get_height(spr)
+					if (sprite_exists(spr)) {
+						var sw = sprite_get_width(spr)
+						var sh = sprite_get_height(spr)
+					
+						inst.image_xscale = entity.width / sw
+						inst.image_yscale = entity.height / sh
+					}
+					else {
+						inst.image_xscale = 1
+						inst.image_yscale = 1
+					}
 					
 					
 					// Load the fields
