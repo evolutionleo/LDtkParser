@@ -220,6 +220,9 @@ function LDtkLoad(level_name) {
 			case "Entities": // instances
 				var tile_size = this_layer.__gridSize // for scaling
 				
+				var entity_references = {};
+				var entity_ref_fetch_list = [];
+				
 				// for every entity in the level
 				for(var e = 0; e < array_length(this_layer.entityInstances); ++e) {
 					var entity = this_layer.entityInstances[e]
@@ -244,13 +247,14 @@ function LDtkLoad(level_name) {
 					
 					var inst = instance_create_layer(_x, _y, gm_layer_id, oEmpty) // we'll need instance_change() to work around the create event
 					
+					// add to entity_reference
+					entity_references[$ entity.iid] = inst;
+					
 					// TODO: Change this up for objects without sprites
 					var spr = object_get_sprite(object_id)
 					var sw = sprite_get_width(spr)
 					var sh = sprite_get_height(spr)
 					
-					inst.image_xscale = entity.width / sw
-					inst.image_yscale = entity.height / sh
 					
 					// Load the fields
 					
@@ -291,6 +295,14 @@ function LDtkLoad(level_name) {
 									field_value[@ j] = __LDtkPrepareColor(field_value[j])
 								}
 								break
+							case "EntityRef":
+								// add to entity_ref_fetch_list so we can add the proper reference later
+								array_push(entity_ref_fetch_list, {
+									"gm_instance": inst,
+									"gm_var_name": gm_field_name,
+									"entity_ref": field_value.entityIid
+								})
+								break
 							default:
 								if (string_pos("LocalEnum", field_type)) {
 									var enum_name_idx = string_pos(".", field_type)
@@ -306,7 +318,6 @@ function LDtkLoad(level_name) {
 										field_value = __LDtkPrepareEnum(_enum_name, field_value)
 									}
 								}
-								
 								break
 						}
 						
@@ -324,6 +335,13 @@ function LDtkLoad(level_name) {
 					}
 					
 					__LDtkTrace("Loaded Entity! GM instance id=%", inst)
+				}
+				
+				// Add proper instance references to entity reference fields
+				for (var j = 0; j < array_length(entity_ref_fetch_list); ++j) {
+					var _fetch = entity_ref_fetch_list[j]
+					var _gm_inst = _fetch.gm_instance
+					variable_instance_set(_gm_inst, _fetch.gm_var_name, entity_references[$ _fetch.entity_ref])
 				}
 				
 				__LDtkTrace("Loaded an Entities Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
