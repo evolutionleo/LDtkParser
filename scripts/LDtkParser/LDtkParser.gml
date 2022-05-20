@@ -3,8 +3,23 @@
 #macro LDTK_LIVE true
 #macro LDTK_LIVE_FREQUENCY 15
 
-function __LDtkInit() {
-	if (variable_global_exists("__ldtk_config")) {
+global.__ldtk_initialized = false;
+global.__ldtk_live_hash = ""
+global.__ldtk_live_timer = -1
+global.__ldtk_live_update_pending = false
+global.__ldtk_stacked_tilemaps = {}
+
+// Set up live reloading
+if (LDTK_LIVE) {
+	global.__ldtk_time_source = time_source_create(time_source_global, LDTK_LIVE_FREQUENCY, time_source_units_frames, function() {
+		__LDtkLive()
+	}, [], -1)
+	
+	time_source_start(global.__ldtk_time_source)
+}
+
+function __LDtkConfigInit() {
+	if (global.__ldtk_initialized) {
 		// This means we've already initialized our config, so just return b/c
 		// we don't wanna overwrite what the user has set already
 		return
@@ -44,26 +59,15 @@ function __LDtkInit() {
 		}
 	}
 	
-	global.__ldtk_live_hash = ""
-	global.__ldtk_live_timer = -1
-	global.__ldtk_live_update_pending = false
-	global.__ldtk_stacked_tilemaps = {}
-	
-	// Set up live reloading
-	if (LDTK_LIVE) {
-		global.__ldtk_time_source = time_source_create(time_source_global, LDTK_LIVE_FREQUENCY, time_source_units_frames, function() {
-			__LDtkLive()
-		}, [], -1)
-		
-		time_source_start(global.__ldtk_time_source)
-	}
+	global.__ldtk_initialized = true;
 }
+__LDtkConfigInit()
 
 ///@function	LDtkConfig(config)
 ///@description Changes some config variables
 function LDtkConfig(config) {
 	// Ensure our config exists
-	__LDtkInit();
+	__LDtkConfigInit();
 	
 	var config_names = variable_struct_get_names(config)
 	
@@ -85,7 +89,7 @@ function LDtkConfig(config) {
 ///@description	Updates __ldtk_config.mappings
 function LDtkMappings(mappings) {
 	// Ensure our config exists
-	__LDtkInit();
+	__LDtkConfigInit();
 	
 	__LDtkDeepInheritVariables(mappings, global.__ldtk_config.mappings)
 }
@@ -95,7 +99,7 @@ function LDtkMappings(mappings) {
 ///@param		{string} [level_name]
 function LDtkLoad(level_name) {
 	// Ensure our config exists
-	__LDtkInit();
+	__LDtkConfigInit();
 	
 	__LDtkTrace("Starting to load!")
 	
