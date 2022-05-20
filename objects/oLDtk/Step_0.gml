@@ -1,3 +1,0 @@
-/// @desc Live update!
-
-LDtkLive()
