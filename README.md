@@ -2,6 +2,7 @@
 ## A feature-rich parser for .ldtk levels for GameMaker: Studio 2.3
 
 ### Maintaned by [@evolutionleo](https://github.com/evolutionleo/) (me)
+#### ❤️ Huge thanks to [@FaultyFunctions](https://github.com/FaultyFunctions) for his various contributions! ❤️
 
 ## Features
 - Load LDtk levels with all their contents with one function call!
