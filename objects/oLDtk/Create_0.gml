@@ -1,29 +1,11 @@
 /// @desc Configs
 
-// REMEMBER TO TURN ON "disable file system sandbox" WHEN USING LIVE UPDATING
-// ...and to set this macro to 0 when building the game!
-#macro LDTK_LIVE 1
+var _file = LDTK_LIVE ? "D:\\Projects\\GameMaker Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk" : "LDtkTest.ldtk";
 
-
-if (LDTK_LIVE) {
-	LDtkConfig({
-		// this will load the bundled version (live updating won't work)
-		//file: "LDtkTest.ldtk",
-		// so we need to load directly from the project folder
-		
-		// change this to your project directory
-		file: "D:\\Projects\\GameMaker Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk",
-		level_name: "LDtkTest1"
-	})
-}
-else {
-	LDtkConfig({
-		file: "LDtkTest.ldtk",
-		level_name: "LDtkTest1"
-	})
-}
-
-
+LDtkConfig({
+	file: _file,
+	level_name: "LDtkTest1"
+})
 
 LDtkMappings({
 	layers: {
