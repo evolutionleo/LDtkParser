@@ -235,6 +235,8 @@ function LDtkLoad(level_name) {
 						_field_struct.image_yscale = entity.height / sh
 					}
 					
+					var _entityRefFieldPromise = []
+					
 					// for each field of the entity
 					for(var f = 0; f < array_length(entity.fieldInstances); ++f) {
 						var field = entity.fieldInstances[f]
@@ -266,12 +268,8 @@ function LDtkLoad(level_name) {
 								}
 								break
 							case "EntityRef":
-								// add to entity_ref_fetch_list so we can add the proper reference later
-								array_push(entity_ref_fetch_list, {
-									"gm_instance": inst,
-									"gm_var_name": gm_field_name,
-									"entity_ref": field_value.entityIid
-								})
+								// add to _entityRefFieldPromise so we can add the proper reference later
+								array_push(_entityRefFieldPromise, {"gm_var_name": gm_field_name, "entity_ref": field_value.entityIid});
 								break
 							default:
 								if (string_pos("LocalEnum", field_type)) {
@@ -295,6 +293,14 @@ function LDtkLoad(level_name) {
 					}
 					
 					var inst = instance_create_layer(_x, _y, gm_layer_id, object_id, _field_struct)
+					
+					for (var j = 0; j < array_length(_entityRefFieldPromise); ++j) {
+						array_push(entity_ref_fetch_list, {
+							"gm_instance": inst,
+							"gm_var_name": _entityRefFieldPromise[j].gm_var_name,
+							"entity_ref": _entityRefFieldPromise[j].entity_ref
+						})
+					}
 					
 					entity_references[$ entity.iid] = inst
 					
