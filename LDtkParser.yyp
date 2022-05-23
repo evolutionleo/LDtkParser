@@ -49,7 +49,7 @@
     {"CopyToMask":-1,"filePath":"datafiles","resourceVersion":"1.0","name":"LDtkTest.ldtk","resourceType":"GMIncludedFile",},
   ],
   "MetaData": {
-    "IDEVersion": "2022.500.0.97",
+    "IDEVersion": "2022.500.0.111",
   },
   "resourceVersion": "1.5",
   "name": "LDtkParser",
