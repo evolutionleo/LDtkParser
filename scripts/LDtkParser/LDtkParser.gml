@@ -7,7 +7,6 @@ global.__ldtk_initialized = false;
 global.__ldtk_live_hash = ""
 global.__ldtk_live_timer = -1
 global.__ldtk_live_update_pending = false
-global.__ldtk_stacked_tilemaps = {}
 
 // Set up live reloading
 if (LDTK_LIVE) {
@@ -33,9 +32,7 @@ function __LDtkConfigInit() {
 		room_prefix: "r",
 		object_prefix: "o",
 
-		stacked_tiles_support: true, // Whether stacked tiles will create new layers (true) or overwrite tiles underneath (false)
-									  // LDtkParser will complain if this is set to true and stacked tiles are detected
-		stacked_tiles_depth_delta: 1, // How much depth separation to give to stacked tile layers
+		stacked_tiles_support: true, // Whether stacked tiles will create new tilemaps (true) or overwrite tiles underneath (false)
 	
 		mappings: { // if a mapping doesn't exist - ldtk name (with a prefix) is used
 			levels: { // ldtk_level_name -> gm_room_name
@@ -343,17 +340,20 @@ function LDtkLoad(level_name) {
 				
 				var tile_size = this_layer.__gridSize
 				
-				// Preprocess the highest depth for tile stacking
-				var _depth_grid = ds_grid_create(cwid * tile_size, chei * tile_size)
-				ds_grid_clear(_depth_grid, -1)
-				for (var t = 0; t < array_length(this_layer.gridTiles); ++t) {
-					var _cell_x = this_layer.gridTiles[t].px[0] div tile_size
-					var _cell_y = this_layer.gridTiles[t].px[1] div tile_size
-					ds_grid_set(_depth_grid, _cell_x, _cell_y, ds_grid_get(_depth_grid, _cell_x, _cell_y) + 1)
+				var _highest_depth = 0
+				if (config.stacked_tiles_support) {
+					// Preprocess the highest depth for tile stacking
+					var _depth_grid = ds_grid_create(cwid * tile_size, chei * tile_size)
+					ds_grid_clear(_depth_grid, -1)
+					for (var t = 0; t < array_length(this_layer.gridTiles); ++t) {
+						var _cell_x = this_layer.gridTiles[t].px[0] div tile_size
+						var _cell_y = this_layer.gridTiles[t].px[1] div tile_size
+						ds_grid_set(_depth_grid, _cell_x, _cell_y, ds_grid_get(_depth_grid, _cell_x, _cell_y) + 1)
+					}
+					
+					_highest_depth = max(0, ds_grid_get_max(_depth_grid, 0, 0, ds_grid_width(_depth_grid) - 1, ds_grid_height(_depth_grid) - 1))
+					ds_grid_destroy(_depth_grid)
 				}
-				
-				var _highest_depth = max(0, ds_grid_get_max(_depth_grid, 0, 0, ds_grid_width(_depth_grid) - 1, ds_grid_height(_depth_grid) - 1))
-				ds_grid_destroy(_depth_grid)
 				
 				// Create tilemaps based on depth
 				var gm_tileset_name = __LDtkMappingGetTileset(tileset_def.identifier)
@@ -397,13 +397,15 @@ function LDtkLoad(level_name) {
 					var y_flip = this_tile.f & 2
 					tile_data = tile_set_mirror(tile_data, x_flip)
 					tile_data = tile_set_flip(tile_data, y_flip)
-
-					// Check if this is a stacked tile
+					
 					var _tilemap = tilemaps[0]
-					var _tilemap_depth = 0;
-					while (tilemap_get(_tilemap, cell_x, cell_y) != 0) {
-						++_tilemap_depth
-						_tilemap = tilemaps[_tilemap_depth]
+					// Check if this is a stacked tile
+					if (config.stacked_tiles_support) {
+						var _tilemap_depth = 0;
+						while (tilemap_get(_tilemap, cell_x, cell_y) != 0) {
+							++_tilemap_depth
+							_tilemap = tilemaps[_tilemap_depth]
+						}
 					}
 					
 					tilemap_set(_tilemap, tile_data, cell_x, cell_y);
