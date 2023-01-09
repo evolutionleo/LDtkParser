@@ -11,6 +11,8 @@ global.__ldtk_config = {
 	room_prefix: "r",
 	object_prefix: "o",
 	
+	clear_timemaps: false, // clear tilemaps on reload with empty tiles
+	
 	mappings: { // if a mapping doesn't exist - ldtk name (with a prefix) is used
 		levels: { // ldtk_level_name -> gm_room_name
 			
@@ -283,8 +285,6 @@ function LDtkLoad(level_name) {
 							gm_field_name = field_name
 						
 						
-						
-						
 						// some types require additional work
 						switch(field_type) {
 							case "Point":
@@ -362,31 +362,25 @@ function LDtkLoad(level_name) {
 				break
 			case "Tiles": // tile map!
 				var tilemap = layer_tilemap_get_id(gm_layer_id)
-				// if this is commented, you can pipe different layers to 
-				//var empty_tile = 0
-				//tilemap_clear(tilemap, empty_tile)
 				
-				// this is layer's cell size
-				//var cwid = this_layer.__cWid
-				//var chei = this_layer.__cHei
+				// this is the layers's size in cells
+				var cwid = this_layer.__cWid
+				var chei = this_layer.__cHei
 				
-				// this is tileset's cell size
-				var cwid = -1
-				var chei = -1
+				// find the tileset definition
 				var tileset_def = undefined
+				var found_tileset_def = false
 				
 				for(var ts = 0; ts < array_length(data.defs.tilesets); ++ts) {
 					tileset_def = data.defs.tilesets[ts]
 					
 					if tileset_def.uid == this_layer.__tilesetDefUid {
-						cwid = tileset_def.__cWid
-						chei = tileset_def.__cHei
-						
+						found_tileset_def = true
 						break
 					}
 				}
 				
-				if tileset_def == undefined
+				if !found_tileset_def
 					break
 				
 				var tile_size = this_layer.__gridSize
@@ -404,8 +398,17 @@ function LDtkLoad(level_name) {
 					if gm_tileset_id == -1
 						break
 					
-					tilemap = layer_tilemap_create(gm_layer_id, this_layer.__pxTotalOffsetX, this_layer.__pxTotalOffsetY, gm_tileset_id, cwid * tile_size, chei * tile_size)
-				} else { // respect layer offsets
+					tilemap = layer_tilemap_create(gm_layer_id, this_layer.__pxTotalOffsetX, this_layer.__pxTotalOffsetY, gm_tileset_id, cwid, chei)
+				} else { // the tilemap is already there
+					// resize it
+					tilemap_set_width(tilemap, cwid)
+					tilemap_set_height(tilemap, chei)
+					
+					// clear of any remaining tiles
+					if (config.clear_timemaps)
+						tilemap_clear(tilemap, 0)
+					
+					// respect layer offsets
 					tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
 					tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
 				}
