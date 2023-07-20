@@ -1,0 +1,17 @@
+{
+  "FolderOrderSettings": [
+    {"name":"Rooms","order":5,"path":"folders/LDtkParser Demo/Rooms.yy",},
+    {"name":"Sprites","order":7,"path":"folders/LDtkParser Demo/Sprites.yy",},
+    {"name":"Tilesets","order":8,"path":"folders/LDtkParser Demo/Tilesets.yy",},
+    {"name":"LDtkParser","order":1,"path":"folders/LDtkParser.yy",},
+    {"name":"LDtkParser Demo","order":2,"path":"folders/LDtkParser Demo.yy",},
+  ],
+  "ResourceOrderSettings": [
+    {"name":"oEmpty","order":1,"path":"objects/oEmpty/oEmpty.yy",},
+    {"name":"oLDtk_test","order":2,"path":"objects/oLDtk_test/oLDtk_test.yy",},
+    {"name":"LDtkParser","order":2,"path":"scripts/LDtkParser/LDtkParser.yy",},
+    {"name":"sYellowSquare","order":2,"path":"sprites/sYellowSquare/sYellowSquare.yy",},
+    {"name":"oLink","order":3,"path":"objects/oLink/oLink.yy",},
+    {"name":"sTiles","order":1,"path":"sprites/sTiles/sTiles.yy",},
+  ],
+}

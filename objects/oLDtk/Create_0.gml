@@ -6,17 +6,15 @@
 
 
 if (LDTK_LIVE) {
+	// live reload config
 	LDtkConfig({
-		// this will load the bundled version (live updating won't work)
-		//file: "LDtkTest.ldtk",
-		// so we need to load directly from the project folder
-		
 		// change this to your project directory
 		file: "D:\\Projects\\GameMaker Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk",
 		level_name: "LDtkTest1"
 	})
 }
 else {
+	// release config
 	LDtkConfig({
 		file: "LDtkTest.ldtk",
 		level_name: "LDtkTest1"

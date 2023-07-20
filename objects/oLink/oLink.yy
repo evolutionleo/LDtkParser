@@ -1,10 +1,10 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "oLDtk_test",
+  "name": "oLink",
   "eventList": [
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
@@ -27,13 +27,13 @@
   "physicsShapePoints": [],
   "physicsStartAwake": true,
   "properties": [
-    {"resourceType":"GMObjectProperty","resourceVersion":"1.0","name":"a","filters":[],"listItems":[],"multiselect":false,"rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"value":"-1","varType":1,},
-    {"resourceType":"GMObjectProperty","resourceVersion":"1.0","name":"testEnum","filters":[],"listItems":[],"multiselect":false,"rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"value":"default value","varType":2,},
+    {"resourceType":"GMObjectProperty","resourceVersion":"1.0","name":"p","filters":[],"listItems":[],"multiselect":false,"rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"value":"noone","varType":4,},
+    {"resourceType":"GMObjectProperty","resourceVersion":"1.0","name":"points","filters":[],"listItems":[],"multiselect":true,"rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"value":"0","varType":6,},
   ],
   "solid": false,
   "spriteId": {
-    "name": "sRedSquare",
-    "path": "sprites/sRedSquare/sRedSquare.yy",
+    "name": "sYellowSquare",
+    "path": "sprites/sYellowSquare/sYellowSquare.yy",
   },
   "spriteMaskId": null,
   "visible": true,
