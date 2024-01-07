@@ -445,7 +445,7 @@ function LDtkLoad(level_name) {
 					
 					var tile_src_x = this_tile.src[0],
 						tile_src_y = this_tile.src[1]
-					var tile_id = tile_src_x/tile_size + tile_src_y/tile_size*cwid
+					var tile_id = tile_src_x/tile_size + tile_src_y/tile_size*tileset_def.__cWid
 					
 					var tile_data = tile_id
 					var x_flip = this_tile.f & 1
