@@ -3,7 +3,7 @@ A feature-rich parser for .ldtk levels for GameMaker: Studio 2.3
 
 Maintained by [@evolutionleo](https://github.com/evolutionleo/) (me)
 
-❤️ Huge thanks to [@FaultyFunctions](https://github.com/FaultyFunctions) for his various contributions! ❤️
+❤️ Huge thanks to [@FaultyFunctions](https://github.com/FaultyFunctions) and Ponno for their various contributions! ❤️
 
 ## Join the [Discord](https://discord.gg/bRpMgTquAr) if you have any questions/suggestions/issues with the parser!
 
