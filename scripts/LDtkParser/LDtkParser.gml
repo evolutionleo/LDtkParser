@@ -48,6 +48,8 @@ global.__ldtk_config = {
 global.ldtk_intgrids = {}
 
 
+///feather ignore GM2017
+
 ///@function	LDtkIntGrid(csv_array, w, h)
 ///@param		{Array<Real>} csv_array
 ///@param		{Real} width
@@ -177,6 +179,9 @@ function LDtkLoad(level_name) {
 	room_set_width(room, level_w)
 	room_set_height(room, level_h)
 	
+	room_width = level_w
+	room_height = level_h
+	
 	#endregion
 	#region Handle layers
 
@@ -216,6 +221,7 @@ function LDtkLoad(level_name) {
 		switch(layer_type) {
 			#region Entity Layers
 			case "Entities": // instances
+			{
 				var tile_size = this_layer.__gridSize // for scaling
 				
 				// for every entity in the level
@@ -351,9 +357,11 @@ function LDtkLoad(level_name) {
 				
 				__LDtkTrace("Loaded an Entities Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
 				break
+			}
 			#endregion
 			#region IntGrid Layers
 			case "IntGrid":
+			{
 				if (config.ignore_intgrids) {
 					__LDtkTrace("IntGrid layers are ignored because of config.ignore_intgrids.")
 					break
@@ -376,92 +384,212 @@ function LDtkLoad(level_name) {
 				__LDtkTrace("Loaded IntGrid! name=%, gm_name=%", _layer_name, grid_name)
 				
 				break
-				#endregion
+			}
+			#endregion
 			#region AutoLayers
-			case "AutoLayer":
-				__LDtkTrace("AutoLayers are ignored")
-				break
+			case "AutoLayer": // autolayer tilemap
+			{
+				var _level_path = this_layer.__tilesetRelPath
+				for(var u = 0; u < array_length(data.defs.tilesets); ++u)
+				{
+					var _tilsets = data.defs.tilesets[u]
+					var _tilsets_path = _tilsets.relPath
+					//if _tilsets_path = _level_path
+					{
+						var tilemap = layer_tilemap_get_id(gm_layer_id)
+				
+						// this is the layers's size in cells
+						var cwidTileset = _tilsets.__cWid
+						var cheiTileset = _tilsets.__cHei
+						
+						var cwid = this_layer.__cWid
+						var chei = this_layer.__cHei
+						
+						// find the tileset definition
+						var tileset_def = undefined
+						var found_tileset_def = false
+				
+						for(var ts = 0; ts < array_length(data.defs.tilesets); ++ts)
+						{
+							tileset_def = data.defs.tilesets[ts]
+					
+							if tileset_def.uid == this_layer.__tilesetDefUid {
+								found_tileset_def = true
+								__LDtkTrace("found tileset")
+								break
+							}
+						}
+				
+						if !found_tileset_def
+						{
+							__LDtkTrace("!found_tileset_def")
+							break
+						}
+				
+						var tile_size = this_layer.__gridSize
+				
+						// create tilemap if it doesn't exist on the layer
+						if (tilemap == -1) {
+							var tileset_name = tileset_def.identifier
+					
+							var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
+							gm_tileset_name ??= config.tileset_prefix + tileset_name
+					
+							var gm_tileset_id = asset_get_index(gm_tileset_name)
+					
+							if gm_tileset_id == -1
+								break
+					
+							tilemap = layer_tilemap_create(gm_layer_id, this_layer.__pxTotalOffsetX, this_layer.__pxTotalOffsetY, gm_tileset_id, cwid, chei)
+						}
+						else { // the tilemap is already there
+							// resize it
+							tilemap_set_width(tilemap, cwid)
+							tilemap_set_height(tilemap, chei)
+					
+							// clear of any remaining tiles
+							if (config.clear_timemaps)
+								tilemap_clear(tilemap, 0)
+					
+							// respect layer offsets
+							tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
+							tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+						}
+				
+						for(var t = 0; t < array_length(this_layer.autoLayerTiles); ++t) {
+							var this_tile = this_layer.autoLayerTiles[t]
+					
+							var _x = this_tile.px[0]
+							var _y = this_tile.px[1]
+							var cell_x = _x div tile_size
+							var cell_y = _y div tile_size
+					
+							var tile_src_x = this_tile.src[0],
+								tile_src_y = this_tile.src[1]
+							
+							var tile_id = tile_src_x/tile_size + tile_src_y/tile_size*(cwidTileset)
+							var tile_data = tile_id
+							
+							var x_flip = this_tile.f & 1
+							var y_flip = this_tile.f & 2
+							
+							tile_data = tile_set_mirror(tile_data, x_flip)
+							tile_data = tile_set_flip(tile_data, y_flip)
+					
+							tilemap_set(tilemap, tile_data, cell_x, cell_y)
+						}
+				
+						__LDtkTrace("Loaded a Autolayer! name=%, gm_name=%", _layer_name, gm_layer_name)
+						break;
+					}
+				}
+			} //end case
 			#endregion
 			#region Tile Layers
 			case "Tiles": // tile map!
-				var tilemap = layer_tilemap_get_id(gm_layer_id)
-				
-				// this is the layers's size in cells
-				cwid = this_layer.__cWid
-				chei = this_layer.__cHei
-				
-				// find the tileset definition
-				var tileset_def = undefined
-				var found_tileset_def = false
-				
-				for(var ts = 0; ts < array_length(data.defs.tilesets); ++ts) {
-					tileset_def = data.defs.tilesets[ts]
+			{
+				var _level_path = this_layer.__tilesetDefUid
+				for(var u = 0; u < array_length(data.defs.tilesets); ++u)
+				{
+					var _tilsets = data.defs.tilesets[u]
+					var _tilsets_path = _tilsets.uid
+					if _tilsets_path = _level_path
+					{
+						var tilemap = layer_tilemap_get_id(gm_layer_id)
+
+						// this is the layers's size in cells
+						var cwidTileset = _tilsets.__cWid
+						var cheiTileset = _tilsets.__cHei
+						
+						var cwid = this_layer.__cWid
+						var chei = this_layer.__cHei
+						//global.cwid = tilemap_get_tile_width(tilemap)
+						
+						// find the tileset definition
+						var tileset_def = undefined
+						var found_tileset_def = false
+						
+						for(var ts = 0; ts < array_length(data.defs.tilesets); ++ts) {
+							tileset_def = data.defs.tilesets[ts]
+							
+							if tileset_def.uid == this_layer.__tilesetDefUid {
+								found_tileset_def = true
+								break
+							}
+						}
+						
+						if !found_tileset_def
+							break
+						
+						tile_size = this_layer.__gridSize
+						
+						// create tilemap if it doesn't exist on the layer
+						if (tilemap == -1) {
+							var tileset_name = tileset_def.identifier
+							
+							var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
+							gm_tileset_name ??= config.tileset_prefix + tileset_name
+							
+							var gm_tileset_id = asset_get_index(gm_tileset_name)
+							if gm_tileset_id == -1 {
+								break
+							}
 					
-					if tileset_def.uid == this_layer.__tilesetDefUid {
-						found_tileset_def = true
-						break
+							tilemap = layer_tilemap_create(gm_layer_id, this_layer.__pxTotalOffsetX, this_layer.__pxTotalOffsetY, gm_tileset_id, cwid, chei)
+						}
+						else
+						{
+							// the tilemap is already there -
+							// resize it
+							tilemap_set_width(tilemap, cwid)
+							tilemap_set_height(tilemap, chei)
+					
+							// clear of any remaining tiles
+							if (config.clear_timemaps)
+								tilemap_clear(tilemap, 0)
+					
+							// respect layer offsets
+							tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
+							tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+						}
+				
+						for(var t = 0; t < array_length(this_layer.gridTiles); ++t)
+						{
+							var this_tile = this_layer.gridTiles[t]
+					
+							var _x = this_tile.px[0]
+							var _y = this_tile.px[1]
+							var cell_x = _x div tile_size
+							var cell_y = _y div tile_size
+							//global.cwid = tilemap_get_tile_width(tilemap)
+					
+							var tile_src_x = this_tile.src[0],
+								tile_src_y = this_tile.src[1]
+							
+							var tile_id = tile_src_x/tile_size + tile_src_y/tile_size*(cwidTileset)
+							var tile_data = tile_id
+							
+							var x_flip = this_tile.f & 1
+							var y_flip = this_tile.f & 2
+							
+							tile_data = tile_set_mirror(tile_data, x_flip)
+							tile_data = tile_set_flip(tile_data, y_flip)
+					
+							tilemap_set(tilemap, tile_data, cell_x, cell_y)
+						}
+				
+						__LDtkTrace("Loaded a Tile Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
+						break;
 					}
+
 				}
-				
-				if !found_tileset_def
-					break
-				
-				tile_size = this_layer.__gridSize
-				
-				// create tilemap if it doesn't exist on the layer
-				if (tilemap == -1) {
-					var tileset_name = tileset_def.identifier
-					
-					var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
-					gm_tileset_name ??= config.tileset_prefix + tileset_name
-					
-					var gm_tileset_id = asset_get_index(gm_tileset_name)
-					
-					if gm_tileset_id == -1
-						break
-					
-					tilemap = layer_tilemap_create(gm_layer_id, this_layer.__pxTotalOffsetX, this_layer.__pxTotalOffsetY, gm_tileset_id, cwid, chei)
-				} else { // the tilemap is already there
-					// resize it
-					tilemap_set_width(tilemap, cwid)
-					tilemap_set_height(tilemap, chei)
-					
-					// clear of any remaining tiles
-					if (config.clear_timemaps)
-						tilemap_clear(tilemap, 0)
-					
-					// respect layer offsets
-					tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
-					tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
-				}
-				
-				for(var t = 0; t < array_length(this_layer.gridTiles); ++t) {
-					var this_tile = this_layer.gridTiles[t]
-					
-					var _x = this_tile.px[0]
-					var _y = this_tile.px[1]
-					var cell_x = _x div tile_size
-					var cell_y = _y div tile_size
-					
-					var tile_src_x = this_tile.src[0],
-						tile_src_y = this_tile.src[1]
-					var tile_id = tile_src_x/tile_size + tile_src_y/tile_size*tileset_def.__cWid
-					
-					var tile_data = tile_id
-					var x_flip = this_tile.f & 1
-					var y_flip = this_tile.f & 2
-					tile_data = tile_set_mirror(tile_data, x_flip)
-					tile_data = tile_set_flip(tile_data, y_flip)
-					
-					tilemap_set(tilemap, tile_data, cell_x, cell_y)
-				}
-				
-				__LDtkTrace("Loaded a Tile Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
-				break
+			}
 			#endregion
 			default:
+			{
 				__LDtkTrace("warning! undefined layer type! (%)", this_layer.__type)
 				break
+			}
 		}
 	}
 	
@@ -591,7 +719,164 @@ function LDtkReloadFields() {
 	}
 }
 
+#region 
 
+/// @function LDtkChangeLevel(level_name)
+/// @desc    Clears existing LDtk instances and loads a new level
+/// @param   {String} level_name
+function LDtkChangeLevel(_level_name) {
+
+    with (all){
+    	if (object_index != oLDtk && object_index != oLink){
+    		instance_destroy()
+    	}
+    }
+
+    // Update config and load new level
+    global.__ldtk_config.level_name = _level_name;
+    LDtkLoad(_level_name);
+
+}
+
+
+
+
+
+/// @func LDtkGetLevelByIid(_iid)
+/// @arg _iid    the IID of the level in LDtk
+/// @return       the level struct, or undefined if not found
+function LDtkGetLevelByIid(_iid) {
+    var levels = global.ldtk_data.levels;
+    for (var i = 0; i < array_length(levels); ++i) {
+        var lvl = levels[i];
+        if (lvl.iid == _iid) {
+            return lvl;    // found it!
+        }
+    }
+    return undefined;      // no matching IID
+}
+
+
+
+/// @func LDtkFindNeighbor(_dir)
+/// @arg _dir    one of "n","s","e","w"
+/// @return       a neighbor record with levelIid, or undefined
+function LDtkFindNeighbor(_dir) {
+    var list = global.current_ldtk_level.__neighbours;             // raw neighbor array from JSON
+
+    // 1) collect all iids for that direction
+    var candidates = [];
+    for (var i = 0; i < array_length(list); ++i) {
+        if (list[i].dir == _dir) {
+            array_push(candidates, list[i].levelIid);
+            
+        }
+    }
+    // 2) none or single → easy
+    if (array_length(candidates) == 0) return undefined;
+    
+    if (array_length(candidates) == 1) return { levelIid: candidates[0] };
+
+    // 3) multiple → choose by player's world Y
+    var worldY = oLink.y + global.current_ldtk_level.worldY;
+
+    // try to find which neighbor's vertical span contains worldY
+    for (var i = 0; i < array_length(candidates); ++i) {
+        var _iid = candidates[i];
+		var _lvlName   = LDtkGetLevelByIid(_iid); // This returns the level name from a struct containing iids with their identifiers
+        
+        // var lvl = LDtkGetLevelByIid(iid);
+        if (worldY >= _lvlName.worldY && worldY < _lvlName.worldY + _lvlName.pxHei) {
+            return { levelIid: _iid };
+        }
+    }
+
+    // 4) fallback: pick the neighbor whose midpoint is closest
+    var best = -1;
+    var bestDist = power(10, 9); // supposed to be a high number so the room height will never reach this
+    for (var i = 0; i < array_length(candidates); ++i) {
+        var _iid = candidates[i];
+		var _lvlName   = LDtkGetLevelByIid(_iid); // This returns the level name from a struct containing iids with their identifiers
+        // var lvl = LDtkGetLevelByIid(iid);
+        var midY = _lvlName.worldY + _lvlName.pxHei * 0.5;
+        var d = abs(worldY - midY);
+        if (d < bestDist) {
+            bestDist = d;
+            best = _iid;
+        }
+    }
+    return { levelIid: best };
+}
+
+
+
+
+
+
+/// @func LDtkGoToNeighbor(dir)
+/// @arg dir   string: direction badge ("n","s","e","w","nw","se", etc)
+/// @ret bool  true if we found & loaded, false otherwise
+
+function LDtkGoToNeighbor(_dir) {
+    var _neighbor = LDtkFindNeighbor(_dir);
+    if (_neighbor == undefined) {
+    	return false;
+	}
+	
+    var _iid       = _neighbor.levelIid;
+    // show_message($"iid is {_iid} and struct = {global.ldtk_iid_to_level_struct}")
+    var _lvlName   = global.ldtk_iid_to_level_struct[$ _iid]; // This returns the level name from a struct containing iids with their identifiers
+    var _target_level_width = -1;
+    var _target_level_height = -1;
+    var _target_level_world_x = -1;
+    var _target_level_world_y = -1;
+    // Iterate through all levels in the new global variable
+	for (var i = 0; i < array_length(global.ldtk_data.levels); ++i) {
+
+	    // Check if the identifier matches
+	    if (global.ldtk_data.levels[i].identifier == _lvlName) {
+	        // Now you have access to the level data
+	        _target_level_width = global.ldtk_data.levels[i].pxWid;  // The pixel width of the level
+	        _target_level_height = global.ldtk_data.levels[i].pxHei; // The pixel height of the level
+	        _target_level_world_x = global.ldtk_data.levels[i].worldX;     // The world X coordinate of the level
+	        _target_level_world_y = global.ldtk_data.levels[i].worldY;     // The world Y coordinate of the level
+
+	    }
+	}
+    // Handling player spawn point (door-to-door transitions)
+    
+    var _player_world_x = oLink.x + global.current_ldtk_level.worldX;
+    var _player_world_y = oLink.y + global.current_ldtk_level.worldY;
+    var _player_world_spawn_x = _player_world_x - _target_level_world_x;
+	var _player_world_spawn_y = _player_world_y - _target_level_world_y;
+
+	
+	switch (_dir) {
+	    case "n": _player_world_spawn_y = _target_level_height - 12; break;
+	    case "s": _player_world_spawn_y = 12; break;
+	    case "e": _player_world_spawn_x = 12; break;
+	    case "w": _player_world_spawn_x = _target_level_width - 12; break;
+	}
+
+
+    if (_lvlName == undefined) {
+        __LDtkTrace("LDtk neighbor IID not found: " + iid);
+        return false;
+    }
+
+
+    LDtkChangeLevel(_lvlName);
+	__LDtkTrace($"Changing level to {_lvlName}")
+	oLink.x = _player_world_spawn_x;
+	oLink.y = _player_world_spawn_y;
+
+
+    return true;
+}
+
+
+
+#endregion
 #region Utility functions	
 
 function __LDtkTrace(str) {
