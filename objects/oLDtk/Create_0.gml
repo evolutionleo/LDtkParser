@@ -9,7 +9,7 @@ if (LDTK_LIVE) {
 	// live reload config
 	LDtkConfig({
 		// change this to your project directory
-		file: "D:\\Projects\\GameMaker Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk",
+		file: "C:\\Projects\\GameMaker Projects\\LDtkParser\\datafiles\\LDtkTest.ldtk",
 		level_name: "LDtkTest1"
 	})
 }

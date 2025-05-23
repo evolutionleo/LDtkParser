@@ -1,47 +1,51 @@
 {
-  "resourceType": "GMProject",
-  "resourceVersion": "1.7",
-  "name": "LDtkParser",
-  "AudioGroups": [
-    {"resourceType":"GMAudioGroup","resourceVersion":"1.3","name":"audiogroup_default","targets":-1,},
+  "$GMProject":"v1",
+  "%Name":"LDtkParser",
+  "AudioGroups":[
+    {"$GMAudioGroup":"","%Name":"audiogroup_default","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
   ],
-  "configs": {
-    "children": [],
-    "name": "Default",
+  "configs":{
+    "children":[],
+    "name":"Default",
   },
-  "defaultScriptType": 1,
-  "Folders": [
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Objects","folderPath":"folders/LDtkParser Demo/Objects.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Rooms","folderPath":"folders/LDtkParser Demo/Rooms.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Sprites","folderPath":"folders/LDtkParser Demo/Sprites.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Tilesets","folderPath":"folders/LDtkParser Demo/Tilesets.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"LDtkParser","folderPath":"folders/LDtkParser.yy",},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"LDtkParser Demo","folderPath":"folders/LDtkParser Demo.yy",},
+  "defaultScriptType":1,
+  "Folders":[
+    {"$GMFolder":"","%Name":"LDtkParser Demo","folderPath":"folders/LDtkParser Demo.yy","name":"LDtkParser Demo","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Objects","folderPath":"folders/LDtkParser Demo/Objects.yy","name":"Objects","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Rooms","folderPath":"folders/LDtkParser Demo/Rooms.yy","name":"Rooms","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Sprites","folderPath":"folders/LDtkParser Demo/Sprites.yy","name":"Sprites","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Tilesets","folderPath":"folders/LDtkParser Demo/Tilesets.yy","name":"Tilesets","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"LDtkParser","folderPath":"folders/LDtkParser.yy","name":"LDtkParser","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
-  "IncludedFiles": [
-    {"resourceType":"GMIncludedFile","resourceVersion":"1.0","name":"LDtkTest.ldtk","CopyToMask":-1,"filePath":"datafiles",},
+  "ForcedPrefabProjectReferences":[],
+  "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"LDtkTest.ldtk","CopyToMask":-1,"filePath":"datafiles","name":"LDtkTest.ldtk","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
   ],
-  "isEcma": false,
-  "LibraryEmitters": [],
-  "MetaData": {
-    "IDEVersion": "2023.6.0.89",
+  "isEcma":false,
+  "LibraryEmitters":[],
+  "MetaData":{
+    "IDEVersion":"2024.13.1.193",
   },
-  "resources": [
-    {"id":{"name":"oLDtk","path":"objects/oLDtk/oLDtk.yy",},},
+  "name":"LDtkParser",
+  "resources":[
     {"id":{"name":"oEmpty","path":"objects/oEmpty/oEmpty.yy",},},
     {"id":{"name":"oLDtk_test","path":"objects/oLDtk_test/oLDtk_test.yy",},},
-    {"id":{"name":"LDtkParser","path":"scripts/LDtkParser/LDtkParser.yy",},},
-    {"id":{"name":"sYellowSquare","path":"sprites/sYellowSquare/sYellowSquare.yy",},},
+    {"id":{"name":"oLDtk","path":"objects/oLDtk/oLDtk.yy",},},
     {"id":{"name":"oLink","path":"objects/oLink/oLink.yy",},},
-    {"id":{"name":"sTiles","path":"sprites/sTiles/sTiles.yy",},},
-    {"id":{"name":"tTiles","path":"tilesets/tTiles/tTiles.yy",},},
-    {"id":{"name":"sRedSquare","path":"sprites/sRedSquare/sRedSquare.yy",},},
     {"id":{"name":"rLDtkTest1","path":"rooms/rLDtkTest1/rLDtkTest1.yy",},},
+    {"id":{"name":"LDtkParser","path":"scripts/LDtkParser/LDtkParser.yy",},},
+    {"id":{"name":"sRedSquare","path":"sprites/sRedSquare/sRedSquare.yy",},},
+    {"id":{"name":"sTiles","path":"sprites/sTiles/sTiles.yy",},},
+    {"id":{"name":"sYellowSquare","path":"sprites/sYellowSquare/sYellowSquare.yy",},},
+    {"id":{"name":"tTiles","path":"tilesets/tTiles/tTiles.yy",},},
   ],
-  "RoomOrderNodes": [
+  "resourceType":"GMProject",
+  "resourceVersion":"2.0",
+  "RoomOrderNodes":[
     {"roomId":{"name":"rLDtkTest1","path":"rooms/rLDtkTest1/rLDtkTest1.yy",},},
   ],
-  "TextureGroups": [
-    {"resourceType":"GMTextureGroup","resourceVersion":"1.3","name":"Default","autocrop":true,"border":2,"compressFormat":"bz2","directory":"","groupParent":null,"isScaled":true,"loadType":"default","mipsToGenerate":0,"targets":-1,},
+  "templateType":null,
+  "TextureGroups":[
+    {"$GMTextureGroup":"","%Name":"Default","autocrop":true,"border":2,"compressFormat":"bz2","customOptions":"","directory":"","groupParent":null,"isScaled":true,"loadType":"default","mipsToGenerate":0,"name":"Default","resourceType":"GMTextureGroup","resourceVersion":"2.0","targets":-1,},
   ],
 }

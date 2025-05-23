@@ -1,4 +1,5 @@
 /// @desc
+///feather ignore GM2017
 
 draw_self()
 draw_text(x, y-20, "a = " + string(a))
