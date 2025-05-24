@@ -1,13 +1,10 @@
-# LDtkParser
-### a feature-rich parser for [LDtk](https://ldtk.io) levels in GameMaker
+# LDtkParser - a feature-rich parser for [LDtk](https://ldtk.io) levels in GameMaker
 
-## Credits
+### Join the [Discord](https://discord.gg/bRpMgTquAr) if you have any issues/questions/suggestions regarding the parser!
 
 ### Maintained by [Evoleo](https://github.com/evolutionleo/) (me)
 
-### Huge thanks to [@FaultyFunctions](https://github.com/FaultyFunctions) and Ponno for their contributions! ❤️
-
-### Join the [Discord](https://discord.gg/bRpMgTquAr) if you have any issues/questions/suggestions regarding the parser!
+### ❤️ Huge thanks to [@FaultyFunctions](https://github.com/FaultyFunctions) and Ponno for their contributions! ❤️
 
 
 ## Features
