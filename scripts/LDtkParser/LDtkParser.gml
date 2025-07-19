@@ -17,7 +17,8 @@ global.__ldtk_config = {
 	
 	ignore_intgrids: false,
 	
-	clear_timemaps: false, // clear tilemaps on reload with empty tiles
+	clear_tilemaps: false, // clear tilemaps on reload with empty tiles
+    auto_swap_tileset: true,// Update the tileset of the imported tilemap if it differs.
 	
 	mappings: { // if a mapping doesn't exist - ldtk name (with a prefix) is used
 		levels: { // ldtk_level_name -> gm_room_name
@@ -424,18 +425,18 @@ function LDtkLoad(level_name) {
 						{
 							__LDtkTrace("!found_tileset_def")
 							break
-						}
-				
-						var tile_size = this_layer.__gridSize
+						} 
+                        
+                        // Get the tileset info for the layer
+						var tile_size = this_layer.__gridSize;
+                        
+                        var tileset_name = tileset_def.identifier;
+                        var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)] ;
+                        gm_tileset_name ??= config.tileset_prefix + tileset_name;
+                        var gm_tileset_id = asset_get_index(gm_tileset_name);
 				
 						// create tilemap if it doesn't exist on the layer
 						if (tilemap == -1) {
-							var tileset_name = tileset_def.identifier
-					
-							var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
-							gm_tileset_name ??= config.tileset_prefix + tileset_name
-					
-							var gm_tileset_id = asset_get_index(gm_tileset_name)
 					
 							if gm_tileset_id == -1
 								break
@@ -448,12 +449,18 @@ function LDtkLoad(level_name) {
 							tilemap_set_height(tilemap, chei)
 					
 							// clear of any remaining tiles
-							if (config.clear_timemaps)
+							if (config.clear_tilemaps)
 								tilemap_clear(tilemap, 0)
-					
+                            
 							// respect layer offsets
 							tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
 							tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+                            
+                            // Change the layer's tileset if it differs from imported tilemap
+                            if(config.auto_swap_tileset && (tilemap_get_tileset(tilemap) != gm_tileset_id)){
+                                tilemap_tileset(tilemap, gm_tileset_id);
+                                __LDtkTrace("Swapped tileset of layer=% from % -> %", gm_layer_name, tileset_get_name(tilemap_get_tileset(tilemap)), gm_tileset_name)
+                            }
 						}
 				
 						for(var t = 0; t < array_length(this_layer.autoLayerTiles); ++t) {
@@ -521,16 +528,17 @@ function LDtkLoad(level_name) {
 						if !found_tileset_def
 							break
 						
-						tile_size = this_layer.__gridSize
+						// Get the tileset info for the layer
+						var tile_size = this_layer.__gridSize;
+                        
+                        var tileset_name = tileset_def.identifier;
+                        var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)] ;
+                        gm_tileset_name ??= config.tileset_prefix + tileset_name;
+                        var gm_tileset_id = asset_get_index(gm_tileset_name);
 						
 						// create tilemap if it doesn't exist on the layer
 						if (tilemap == -1) {
-							var tileset_name = tileset_def.identifier
-							
-							var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
-							gm_tileset_name ??= config.tileset_prefix + tileset_name
-							
-							var gm_tileset_id = asset_get_index(gm_tileset_name)
+                            
 							if gm_tileset_id == -1 {
 								break
 							}
@@ -545,12 +553,18 @@ function LDtkLoad(level_name) {
 							tilemap_set_height(tilemap, chei)
 					
 							// clear of any remaining tiles
-							if (config.clear_timemaps)
+							if (config.clear_tilemaps)
 								tilemap_clear(tilemap, 0)
 					
 							// respect layer offsets
 							tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
 							tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+                            
+                            // Change the layer's tileset if it differs from imported tilemap
+                            if(config.auto_swap_tileset && (tilemap_get_tileset(tilemap) != gm_tileset_id)){
+                                tilemap_tileset(tilemap, gm_tileset_id);
+                                __LDtkTrace("Swapped tileset of layer=% from % -> %", gm_layer_name, tileset_get_name(tilemap_get_tileset(tilemap)), gm_tileset_name)
+                            }
 						}
 				
 						for(var t = 0; t < array_length(this_layer.gridTiles); ++t)
