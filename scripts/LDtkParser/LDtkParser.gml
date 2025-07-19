@@ -490,6 +490,7 @@ function LDtkLoad(level_name) {
 						break;
 					}
 				}
+                break;
 			} //end case
 			#endregion
 			#region Tile Layers
@@ -595,8 +596,9 @@ function LDtkLoad(level_name) {
 						__LDtkTrace("Loaded a Tile Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
 						break;
 					}
-
+                    
 				}
+                break;
 			}
 			#endregion
 			default:
