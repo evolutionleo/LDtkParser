@@ -19,6 +19,7 @@ global.__ldtk_config = {
 	
 	clear_tilemaps: false, // clear tilemaps on reload with empty tiles
     auto_swap_tileset: true,// Update the tileset of the imported tilemap if it differs.
+    use_bg_colour: true,// Set's the window's background colour to that of the imported level.
 	
 	mappings: { // if a mapping doesn't exist - ldtk name (with a prefix) is used
 		levels: { // ldtk_level_name -> gm_room_name
@@ -184,6 +185,22 @@ function LDtkLoad(level_name) {
 	room_height = level_h
 	
 	#endregion
+    
+    // Set the room's background color from LDtk.
+    if(config.use_bg_colour == true){
+        var hex_RGB= 0;
+        var gm_BGR= 0;
+        
+        // Convert string to hex color
+        for(var i= 1, iEnd= string_length(level.__bgColor); i <= iEnd;    i++){
+            hex_RGB= hex_RGB << 4;// Shift the bits;
+            hex_RGB+= (string_pos( string_char_at(level.__bgColor, i), "123456789ABCDEF"));
+        }
+        
+        gm_BGR = ((hex_RGB & $0000FF) << 16) | (hex_RGB & $00FF00) | ((hex_RGB & $FF0000) >> 16);// Convert LDtk's hex RGB colour to GM's BGR format. Using literals '$' here instead of hex value '#' due to GM converting it to the BGR format which gives the wrong colour!
+        window_set_color(gm_BGR);
+    }
+    
 	#region Handle layers
 
 
@@ -382,7 +399,7 @@ function LDtkLoad(level_name) {
 				
 				__LDtkTrace("Loaded IntGrid! name=%, gm_name=%", _layer_name, grid_name)
 				
-				//break; Disabled as IntGrid is also a tile autolayer, this allows the code to flow directly into the Autolayer case without having to rewrite the tile import function.
+				//break; Disabled as IntGrid is also utilised as an autolayer within LDtk. Having no break here allows the code to flow directly into the Autolayer case without having to rewrite the tile import function.
 			}
 			#endregion
 			#region AutoLayers
