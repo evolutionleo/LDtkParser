@@ -25,8 +25,8 @@ if (LDTK_LIVE) {
     // live reload config
 	LDtkConfig({
 		// change this to your project directory
-		file: project_directory + "datafiles\\LDtkTest.ldtk",
-		level_name: "LDtkTest1"
+		file: project_directory + "datafiles\\test.ldtk",
+		level_name: "AutoLayers_advanced_demo"
 	})
 }
 else {
@@ -42,6 +42,9 @@ else {
 LDtkMappings({
 	layers: {
 		Tiles: "PlaceholderTiles", // now "Tiles" layer in LDtk = "PlaceholderTiles" layer in GM
+        AutoLayerTest: "tiles_a",
+        IntGrid_layer_OG: "tiles_i",
+        Sky: "tiles_s",
 	},
 	enums: {
 		TestEnum: {
@@ -52,5 +55,7 @@ LDtkMappings({
 	},
 	tilesets: {
 		PlaceholderTiles: "tTiles",
+        Cavernas_by_Adam_Saltsman: "tTest",
 	}
-})
+});
+

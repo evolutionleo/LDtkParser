@@ -10,8 +10,11 @@
     {"name":"oEmpty","order":1,"path":"objects/oEmpty/oEmpty.yy",},
     {"name":"oLDtk_test","order":2,"path":"objects/oLDtk_test/oLDtk_test.yy",},
     {"name":"oLink","order":3,"path":"objects/oLink/oLink.yy",},
+    {"name":"LDtk_IntGrid_funcs","order":3,"path":"scripts/LDtk_IntGrid_funcs/LDtk_IntGrid_funcs.yy",},
     {"name":"LDtkParser","order":2,"path":"scripts/LDtkParser/LDtkParser.yy",},
+    {"name":"sTest","order":3,"path":"sprites/sTest/sTest.yy",},
     {"name":"sTiles","order":1,"path":"sprites/sTiles/sTiles.yy",},
     {"name":"sYellowSquare","order":2,"path":"sprites/sYellowSquare/sYellowSquare.yy",},
+    {"name":"tTest","order":1,"path":"tilesets/tTest/tTest.yy",},
   ],
 }

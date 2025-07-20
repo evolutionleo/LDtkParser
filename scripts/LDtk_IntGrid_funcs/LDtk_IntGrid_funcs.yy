@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"LDtk_IntGrid_funcs",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"LDtk_IntGrid_funcs",
+  "parent":{
+    "name":"LDtkParser",
+    "path":"folders/LDtkParser.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

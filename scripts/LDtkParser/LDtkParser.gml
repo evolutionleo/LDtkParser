@@ -382,7 +382,7 @@ function LDtkLoad(level_name) {
 				
 				__LDtkTrace("Loaded IntGrid! name=%, gm_name=%", _layer_name, grid_name)
 				
-				break
+				//break; Disabled as IntGrid is also a tile autolayer, this allows the code to flow directly into the Autolayer case without having to rewrite the tile import function.
 			}
 			#endregion
 			#region AutoLayers
