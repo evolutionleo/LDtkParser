@@ -19,6 +19,7 @@
   ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"GridVania.ldtk","CopyToMask":-1,"filePath":"datafiles","name":"GridVania.ldtk","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"LDtkTest.ldtk","CopyToMask":-1,"filePath":"datafiles","name":"LDtkTest.ldtk","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"test.ldtk","CopyToMask":-1,"filePath":"datafiles","name":"test.ldtk","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
   ],
