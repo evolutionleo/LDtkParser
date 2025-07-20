@@ -372,15 +372,13 @@ function LDtkLoad(level_name) {
 				var cwid = this_layer.__cWid
 				var chei = this_layer.__cHei
 				
-				var grid = new LDtkIntGrid(csv_array, cwid, chei)
-				
+                // Get intgrid mapping if it exists
 				var grid_name = _layer_name
-				if (variable_struct_exists(config.mappings.intgrids, grid_name))
-					grid_name = config.mappings.intgrids[$ grid_name]
-				else
-					grid_name = grid_name
+				if (variable_struct_exists(config.mappings.intgrids, grid_name)){
+					grid_name = config.mappings.intgrids[$ grid_name];
+                }
 				
-				global.ldtk_intgrids[$ grid_name] = grid
+				global.ldtk_intgrids[$ grid_name] = new LDtkIntGrid(csv_array, cwid, chei);
 				
 				__LDtkTrace("Loaded IntGrid! name=%, gm_name=%", _layer_name, grid_name)
 				
