@@ -17,8 +17,15 @@ global.__ldtk_config = {
 	
 	ignore_intgrids: false,
 	
-	clear_timemaps: false, // clear tilemaps on reload with empty tiles
+	clear_tilemaps: false, // clear tilemaps on reload with empty tiles
+    auto_swap_tileset: true,// Update the tileset of the imported tilemap if it differs.
+    
+    // Level attributes
+    //-----------------
+    bg_color: true,// Enable parsing of level's background color.
+    window_shares_bg_color: false,// Atuomatically set the window color to the bg_color.
 	
+    
 	mappings: { // if a mapping doesn't exist - ldtk name (with a prefix) is used
 		levels: { // ldtk_level_name -> gm_room_name
 			
@@ -44,9 +51,51 @@ global.__ldtk_config = {
 	}
 }
 
-// All IntGrids are loaded here
-global.ldtk_intgrids = {}
 
+global.ldtk_intgrids = {};// All IntGrids are loaded here
+
+global.ldtk_world_info= {// World and Level info is loaded here
+    
+    offset: {// LDtk can place levels in negative coordinates, which Gamemaker's rooms doesn't support for tilemaps.
+        x: 0,
+        y: 0,
+    },
+    
+    // Room dimensions
+    width: 0,
+    height: 0,
+    
+    /* This is the worldLayout property.
+     * =================================
+     * Free      = Levels do not conform to a grid layout.
+     * GridVania = Levels conform to a grid layout.
+     * Horizontal= Levels are placed one after the other horizontally (eg. Mario).
+     * Vertical  = Levels are placed one after the other vertically (eg. Shmup).
+     */
+    layout: "",
+    
+    level: {
+    /* Inside here will be the data for each level.
+     *=============================================   
+     * 
+     * level_name: {
+     *    name: global.__ldtk_config.level_name,
+     *    biome: "",
+     *    
+     *    // World coords and depth
+     *    world: {
+     *        x: 0, 
+     *        y: 0,
+     *        depth: 0,
+     *    },
+     *    
+     *    bg_color: c_black,// This is the background colour of the level
+     *    
+     *    fields: {},// Custom fields
+     * },
+     */    
+    }
+};//
 
 ///feather ignore GM2017
 
@@ -182,7 +231,47 @@ function LDtkLoad(level_name) {
 	room_width = level_w
 	room_height = level_h
 	
+    // Update level info
+    with(global.ldtk_world_info.level[$ _level.identifier]){
+        name= _level.identifier;
+        
+        x= _level.worldX; // World coordinate in pixels for when the world layour is GridVania / Free, otherwise it defaults to -1
+        y= _level.worldY; // .
+        depth= _level.worldDepth;// Index that represents the "depth" of the level in the world. Default is 0, greater means "above", lower means "below".
+        //............................... This value is mostly used for display only and is intended to make stacking of levels easier to manage.
+        
+        // Import level's custom fields
+        self.field= {};
+        for(var i= array_length(_level.fieldInstances)-1; i >= 0; i--){
+            self.field[$ _level.fieldInstances[i].__identifier]= _level.fieldInstances[i].__value;
+        }
+    }
+    
 	#endregion
+    
+    // Set the room's background color from LDtk.
+    if(config.bg_color == true){
+        var hex_RGB= 0;
+        var gm_BGR= 0;
+        
+        // Convert string to hex color
+        //----------------------------
+        for(var i= 1, iEnd= string_length(level.__bgColor); i <= iEnd;    i++){
+            hex_RGB= hex_RGB << 4;// Shift the bits;
+            hex_RGB+= (string_pos( string_char_at(level.__bgColor, i), "123456789ABCDEF"));
+        }
+        gm_BGR = ((hex_RGB & $0000FF) << 16) | (hex_RGB & $00FF00) | ((hex_RGB & $FF0000) >> 16);// Convert LDtk's hex RGB colour to GM's BGR format. Using literals '$' here instead of hex value '#' due to GM converting it to the BGR format which gives the wrong colour!
+        
+        
+        // Set the background draw color
+        //------------------------------
+        if(config.window_shares_bg_color == true){
+            window_set_color(gm_BGR);
+        }
+        
+        global.ldtk_world_info.level[$ _level_name].bg_color= gm_BGR;
+    }
+    
 	#region Handle layers
 
 
@@ -371,19 +460,17 @@ function LDtkLoad(level_name) {
 				var cwid = this_layer.__cWid
 				var chei = this_layer.__cHei
 				
-				var grid = new LDtkIntGrid(csv_array, cwid, chei)
-				
+                // Get intgrid mapping if it exists
 				var grid_name = _layer_name
-				if (variable_struct_exists(config.mappings.intgrids, grid_name))
-					grid_name = config.mappings.intgrids[$ grid_name]
-				else
-					grid_name = grid_name
+				if (variable_struct_exists(config.mappings.intgrids, grid_name)){
+					grid_name = config.mappings.intgrids[$ grid_name];
+                }
 				
-				global.ldtk_intgrids[$ grid_name] = grid
+				global.ldtk_intgrids[$ grid_name] = new LDtkIntGrid(csv_array, cwid, chei);
 				
 				__LDtkTrace("Loaded IntGrid! name=%, gm_name=%", _layer_name, grid_name)
 				
-				break
+				//break; Disabled as IntGrid is also utilised as an autolayer within LDtk. Having no break here allows the code to flow directly into the Autolayer case without having to rewrite the tile import function.
 			}
 			#endregion
 			#region AutoLayers
@@ -424,18 +511,18 @@ function LDtkLoad(level_name) {
 						{
 							__LDtkTrace("!found_tileset_def")
 							break
-						}
-				
-						var tile_size = this_layer.__gridSize
+						} 
+                        
+                        // Get the tileset info for the layer
+						var tile_size = this_layer.__gridSize;
+                        
+                        var tileset_name = tileset_def.identifier;
+                        var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)] ;
+                        gm_tileset_name ??= config.tileset_prefix + tileset_name;
+                        var gm_tileset_id = asset_get_index(gm_tileset_name);
 				
 						// create tilemap if it doesn't exist on the layer
 						if (tilemap == -1) {
-							var tileset_name = tileset_def.identifier
-					
-							var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
-							gm_tileset_name ??= config.tileset_prefix + tileset_name
-					
-							var gm_tileset_id = asset_get_index(gm_tileset_name)
 					
 							if gm_tileset_id == -1
 								break
@@ -448,12 +535,18 @@ function LDtkLoad(level_name) {
 							tilemap_set_height(tilemap, chei)
 					
 							// clear of any remaining tiles
-							if (config.clear_timemaps)
+							if (config.clear_tilemaps)
 								tilemap_clear(tilemap, 0)
-					
+                            
 							// respect layer offsets
 							tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
 							tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+                            
+                            // Change the layer's tileset if it differs from imported tilemap
+                            if(config.auto_swap_tileset && (tilemap_get_tileset(tilemap) != gm_tileset_id)){
+                                tilemap_tileset(tilemap, gm_tileset_id);
+                                __LDtkTrace("Swapped tileset of layer=% from % -> %", gm_layer_name, tileset_get_name(tilemap_get_tileset(tilemap)), gm_tileset_name)
+                            }
 						}
 				
 						for(var t = 0; t < array_length(this_layer.autoLayerTiles); ++t) {
@@ -483,6 +576,7 @@ function LDtkLoad(level_name) {
 						break;
 					}
 				}
+                break;
 			} //end case
 			#endregion
 			#region Tile Layers
@@ -521,16 +615,17 @@ function LDtkLoad(level_name) {
 						if !found_tileset_def
 							break
 						
-						tile_size = this_layer.__gridSize
+						// Get the tileset info for the layer
+						var tile_size = this_layer.__gridSize;
+                        
+                        var tileset_name = tileset_def.identifier;
+                        var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)] ;
+                        gm_tileset_name ??= config.tileset_prefix + tileset_name;
+                        var gm_tileset_id = asset_get_index(gm_tileset_name);
 						
 						// create tilemap if it doesn't exist on the layer
 						if (tilemap == -1) {
-							var tileset_name = tileset_def.identifier
-							
-							var gm_tileset_name = config.mappings.tilesets[$ (tileset_name)]
-							gm_tileset_name ??= config.tileset_prefix + tileset_name
-							
-							var gm_tileset_id = asset_get_index(gm_tileset_name)
+                            
 							if gm_tileset_id == -1 {
 								break
 							}
@@ -545,12 +640,18 @@ function LDtkLoad(level_name) {
 							tilemap_set_height(tilemap, chei)
 					
 							// clear of any remaining tiles
-							if (config.clear_timemaps)
+							if (config.clear_tilemaps)
 								tilemap_clear(tilemap, 0)
 					
 							// respect layer offsets
 							tilemap_x(tilemap, this_layer.__pxTotalOffsetX)
 							tilemap_y(tilemap, this_layer.__pxTotalOffsetY)
+                            
+                            // Change the layer's tileset if it differs from imported tilemap
+                            if(config.auto_swap_tileset && (tilemap_get_tileset(tilemap) != gm_tileset_id)){
+                                tilemap_tileset(tilemap, gm_tileset_id);
+                                __LDtkTrace("Swapped tileset of layer=% from % -> %", gm_layer_name, tileset_get_name(tilemap_get_tileset(tilemap)), gm_tileset_name)
+                            }
 						}
 				
 						for(var t = 0; t < array_length(this_layer.gridTiles); ++t)
@@ -581,8 +682,9 @@ function LDtkLoad(level_name) {
 						__LDtkTrace("Loaded a Tile Layer! name=%, gm_name=%", _layer_name, gm_layer_name)
 						break;
 					}
-
+                    
 				}
+                break;
 			}
 			#endregion
 			default:
