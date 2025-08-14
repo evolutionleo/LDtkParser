@@ -799,10 +799,10 @@ function LDtkLive(level_name) {
 
 ///@function	LDtkReloadFields()
 ///@desc			Reloads fields from an isolated struct.
-///						This works around the Variable Definitions tab
-///						You don't need this in most cases
-///						You would want to call this in the Create Event
-///						Only works if __ldtk_config.escape_fields is set to `true`
+///					This works around the Variable Definitions tab
+///					You don't need this in most cases
+///					You would want to call this in the Create Event
+///					Only works if __ldtk_config.escape_fields is set to `true`
 function LDtkReloadFields() {
 	if (!global.__ldtk_config.escape_fields) {
 		__LDtkTrace("Warning: LDtkReloadFields() is called, but the `escape fields` config is turned off.\Did you mean to enable the config or not call the function? (Variables are loaded automatically by default)")
@@ -860,14 +860,14 @@ function __LDtkHexToDec(str) {
 	
 	var ans = 0
 	for(var i = 1; i <= string_length(str); ++i) {
+		ans *= 16
+		
 		var c = string_char_at(str, i)
 		
 		if ord(c) >= ord("A")
 			ans += ord(c) - ord("A") + 10
 		else
 			ans += ord(c) - ord("0")
-		
-		ans *= 16
 	}
 	
 	return ans
